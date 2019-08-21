@@ -1,0 +1,63 @@
+在windows中的换行符是\r\n
+在python代码中, 如果以
+ 
+如果以w方式写入:
+f = open('./abcd', "w")
+f.write('abc\nabcd')
+f.close()
+文本w方式写入时, 遇到\n自动替换成\r\n,
+ 
+以二进制文本读:
+ 
+>> > f = open('./abcd', 'rb')
+>> > print(f.read())
+结果:
+b'abc\r\nabcd'
+ 
+以文本读:
+ 
+>> > f = open('./abcd', 'r')
+>> > print(f.read())
+结果:
+abc
+abcd
+ 
+综上可知, 只文本w方式写入时, 遇到\n自动替换成\r\n,
+所以用二进制读取时, 显示\r\n的格式, 自然以文本读时, 会自动换行
+ 
+如果以wb方式写入:
+f = open('./abcd', "wb")
+f.write('abc\nabcd'.encode("utf-8"))
+f.close()
+ 
+以二进制文本读:
+f = open('./abcd', "rb")
+print(f.read())
+ 
+结果: 'abc\nabcd'
+ 
+以文本读:
+f = open('./abcd', "r")
+print(f.read())
+ 
+结果(换行): abc
+abcd
+ 
+因为这种情况是二进制方式写入的, 所以只写入了一个\n, 而只有一个\n在windows中
+并不会被识别为换行符,
+所以当以rb的方式读取时, 结果是
+'abc\nabcd'
+当以r的方式读取时, 又自动将\n识别成换行符, 所以结果时
+ 
+对于Python3环境：
+ 
+r：Python
+将会按照编码格式进行解析，read()
+操作返回的是str
+rb：也即
+binary
+mode，read()
+操作返回的是bytes
+ 
+也就是说, 如果以文本方式写入的文件, 无需制定编码.
+而以二进制文本写入时, 由于写入的内容要求为bytes,所以通过str.encode('charset')来返回bytes
